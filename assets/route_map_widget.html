@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>YM Camp — Echo Lake Route Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root { --bg:#0f1419; --panel:#1a2027; --ink:#e6edf3; --muted:#8b949e; --line:#30363d; --hike:#e74c3c; --drive:#3498db; --camp:#2ecc71; --warn:#f0b429; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif; background:var(--bg); color:var(--ink); }
+  header { padding:18px 22px; border-bottom:1px solid var(--line); }
+  header h1 { margin:0; font-size:22px; font-weight:600; }
+  header p { margin:6px 0 0; color:var(--muted); font-size:13px; }
+  main { display:grid; grid-template-columns: 1fr 380px; gap:0; height:calc(100vh - 73px); }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; height:auto; } #sidebar { max-height:none; } #map { height:60vh; } }
+  #map { height:100%; background:#000; }
+  #sidebar { padding:18px 20px; border-left:1px solid var(--line); background:var(--panel); overflow-y:auto; max-height:calc(100vh - 73px); }
+  h3 { margin:18px 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:600; }
+  .btn { display:flex; align-items:center; gap:8px; padding:10px 12px; background:#21262d; border:1px solid var(--line); border-radius:6px; color:var(--ink); text-decoration:none; font-size:13px; margin-bottom:8px; transition:background 0.15s; }
+  .btn:hover { background:#2d333b; }
+  .btn .label { flex:1; }
+  .btn .arrow { color:var(--muted); }
+  .wp { padding:8px 10px; border-radius:4px; font-size:12px; background:#161b22; border-left:3px solid var(--hike); margin-bottom:6px; }
+  .wp.drive { border-color:var(--drive); }
+  .wp.camp { border-color:var(--camp); }
+  .wp strong { color:var(--ink); display:block; margin-bottom:2px; }
+  .wp .coords { color:var(--muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; }
+  .note { font-size:12px; color:var(--muted); background:#161b22; padding:10px 12px; border-radius:6px; border-left:3px solid var(--warn); margin-top:14px; line-height:1.5; }
+  .note strong { color:var(--ink); }
+  .file-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .file-row input[type=file] { font-size:12px; color:var(--muted); }
+  .file-row button { padding:6px 10px; background:#21262d; border:1px solid var(--line); border-radius:4px; color:var(--ink); font-size:12px; cursor:pointer; }
+  .legend { display:flex; flex-direction:column; gap:6px; margin:0 0 14px; font-size:12px; }
+  .legend-row { display:flex; align-items:center; gap:8px; }
+  .pin { width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,0.4); }
+  .leaflet-popup-content { font-family:inherit; font-size:13px; line-height:1.4; }
+  .leaflet-popup-content b { color:#222; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>YM Camp 2026 — Echo Lake Route Map</h1>
+  <p>Boys hike Fehr Lake Trail (real GPX) from the trailhead to Hoover Lake · Jeep shuttle on Hoover Lake Road from Hoover to Echo Lake camp (real route from Jared's Google My Map)</p>
+</header>
+
+<main>
+  <div id="map"></div>
+
+  <aside id="sidebar">
+
+    <div class="legend">
+      <div class="legend-row"><div style="width:18px;height:4px;background:var(--hike);border-radius:2px;"></div>Hike — Fehr Lake Trail #212 (boys walk)</div>
+      <div class="legend-row"><div style="width:18px;height:4px;background:#3498db;border-radius:2px;border-top:1px dashed #3498db;"></div>Jeep shuttle — Hoover Lake Road</div>
+      <div class="legend-row"><div class="pin" style="background:var(--camp)"></div>Camp (Echo Lake)</div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);background:#161b22;padding:8px 10px;border-radius:4px;margin-bottom:14px;">
+      <strong style="color:var(--ink);">Recommended plan:</strong> boys hike ~2 mi on the maintained trail (3 lakes, descent through the basin). Pickup by Jeep at Hoover Lake, shuttle the ~3.25 mi road segment back to camp. Same logic in reverse for Thursday exit.
+    </div>
+
+    <h3>Open in Google Maps</h3>
+    <a class="btn" target="_blank" href="https://www.google.com/maps/dir/Vineyard,+UT/40.69300214048538,-110.89185895218696">
+      <span class="label">Drive Vineyard → Fehr Lake Trailhead</span><span class="arrow">↗</span>
+    </a>
+    <a class="btn" target="_blank" href="https://www.google.com/maps/dir/Vineyard,+UT/40.662199719974,-110.8949015903432">
+      <span class="label">Drive Vineyard → Echo Lake camp (Jeep)</span><span class="arrow">↗</span>
+    </a>
+    <a class="btn" target="_blank" href="https://www.google.com/maps?q=40.69300214048538,-110.89185895218696">
+      <span class="label">Fehr Lake Trailhead pin</span><span class="arrow">↗</span>
+    </a>
+    <a class="btn" target="_blank" href="https://www.google.com/maps?q=40.662199719974,-110.8949015903432">
+      <span class="label">Echo Lake camp pin</span><span class="arrow">↗</span>
+    </a>
+
+    <h3>Hike segment</h3>
+    <div class="wp">
+      <strong>Fehr Lake Trailhead — Start</strong>
+      <div class="coords">40.69300, -110.89186 · 10,260 ft · UT-150 MP 30.6</div>
+    </div>
+    <div class="wp">
+      <strong>Fehr Lake Trail #212</strong>
+      <div class="coords">Real GPX from Fehr_Lake.gpx · descending through Fehr → Sheppard → Hoover (lake polygons visible on the topo basemap)</div>
+    </div>
+    <div class="wp">
+      <strong>Jeep pickup — small pond SW of Hoover</strong>
+      <div class="coords">Hike continues past Hoover Lake briefly along Hoover Lake Rd · ends at the small pond at the road curve · Jeeps shuttle from here to camp</div>
+    </div>
+
+    <h3>Jeep shuttle (real route from Google My Map)</h3>
+    <div class="wp drive">
+      <strong>Hoover Lake Road</strong>
+      <div class="coords">Real 229-point driving polyline from Jared's Google My Map · Hoover Lake → Echo Lake camp</div>
+    </div>
+    <div class="wp camp">
+      <strong>Echo Lake camp</strong>
+      <div class="coords">40.66220, -110.89490 · 9,740 ft · SE shore · spring water</div>
+    </div>
+
+    <div class="note">
+      <strong>Shuttle logistics:</strong> Jeep capacity is ~4 boys per trip. With 6 boys + leaders you're looking at 2 shuttle runs each direction. Pre-position the Jeep at Hoover before the boys arrive — drop gear at camp first, then drive back up to Hoover. Speaker C also has a Jeep — running two simultaneously cuts trips in half.
+    </div>
+    <div class="note" style="border-left-color:var(--warn); margin-top:8px;">
+      <strong>Comms at Hoover:</strong> no cell signal. Set a hard "we'll be at Hoover by X o'clock" rendezvous time, and a fallback plan if anyone is late or hurt. Two-way radios or SPOT GPS check-ins recommended.
+    </div>
+    <div class="note" style="border-left-color:var(--camp); margin-top:8px;">
+      <strong>Both segments are real now:</strong> trail from Jared's Fehr_Lake.gpx (Gaia export, 38 trackpoints), driving from Jared's Google My Map (KML export, 229 points).
+    </div>
+
+    <div class="note" style="border-left-color:var(--hike); margin-top:8px;">
+      <strong>$6 / 3-day Mirror Lake Hwy pass</strong> required per vehicle (or America the Beautiful pass).
+    </div>
+
+  </aside>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // === Basemaps (all free, no API key) ===
+  // OpenTopoMap shows the Fehr Lake Trail #212 line natively
+  const topo = L.tileLayer(
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    { attribution: "Map © OpenTopoMap (CC-BY-SA) · Data © OpenStreetMap contributors (ODbL)", maxZoom: 17 }
+  );
+  // Esri satellite for terrain visualization
+  const sat = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    { attribution: "Tiles © Esri", maxZoom: 19 }
+  );
+  // USGS Topo
+  const usgs = L.tileLayer(
+    "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
+    { attribution: "USGS The National Map", maxZoom: 16 }
+  );
+  // OpenStreetMap
+  const osm = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    { attribution: "© OpenStreetMap", maxZoom: 19 }
+  );
+
+  // === Overlays ===
+  // Waymarked Trails Hiking — highlights hiking paths with colored emphasis
+  const hikingOverlay = L.tileLayer(
+    "https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png",
+    { attribution: "Hiking trails © waymarkedtrails.org (CC-BY-SA)", maxZoom: 18, opacity: 0.8 }
+  );
+
+  const map = L.map("map", {
+    center: [40.6776, -110.892],
+    zoom: 14,
+    layers: [topo, hikingOverlay],
+  });
+
+  L.control.layers(
+    { "Topo (OpenTopoMap)": topo, "Satellite (Esri)": sat, "USGS Topo": usgs, "Street (OSM)": osm },
+    { "Hiking trails (Waymarked)": hikingOverlay },
+    { collapsed: false, position: "topright" }
+  ).addTo(map);
+
+  // === Waypoints ===
+  // EXACT (authoritative):
+  const TRAILHEAD = [40.69300214048538, -110.89185895218696];
+  const CAMP      = [40.662199719974,    -110.8949015903432];
+
+  // === Real GPX track from Jared's Gaia file (Fehr_Lake.gpx) ===
+  // 38 trackpoints · TH → Hoover Lake. Endpoint matches Jared's Google My Map's Hoover position.
+  const FEHR_TRACK = [
+    [40.692543, -110.892571], [40.692092, -110.891831], [40.691638, -110.89132],
+    [40.691215, -110.890458], [40.691051, -110.889863], [40.690826, -110.889],
+    [40.690662, -110.888489], [40.690792, -110.887414], [40.690856, -110.886811],
+    [40.690761, -110.886384], [40.690418, -110.886124], [40.689964, -110.886124],
+    [40.689296, -110.88617],  [40.688663, -110.88617],  [40.688255, -110.886124],
+    [40.687652, -110.885865], [40.687114, -110.885613], [40.686466, -110.88514],
+    [40.685977, -110.884491], [40.685619, -110.88398],  [40.685195, -110.883118],
+    [40.684871, -110.882348], [40.684642, -110.881707], [40.684318, -110.880974],
+    [40.684253, -110.87999],  [40.684253, -110.879174], [40.684448, -110.878441],
+    [40.684543, -110.877846], [40.684528, -110.87703],  [40.68399,  -110.876473],
+    [40.683555, -110.876084], [40.683013, -110.876038], [40.682819, -110.875268],
+    [40.682495, -110.874451], [40.682071, -110.873726], [40.681632, -110.873253],
+    [40.681095, -110.872696], [40.68058,  -110.872101],
+  ];
+  // (HOOVER pickup point is set below, after the road polyline, since the pickup
+  //  is actually a bit SW of the GPX endpoint — by the small pond off the SW tip of Hoover.)
+
+  // === Real driving polyline from Jared's Google My Map (YM_Camp.kml, Folder 3) ===
+  // 229 points · Hoover Lake → Echo Lake camp via Hoover Lake Road
+  const HOOVER_TO_CAMP_DRIVE = [
+    [40.681008, -110.871931], [40.680761, -110.872074], [40.68065, -110.872139],
+    [40.680381, -110.872109], [40.680266, -110.872095], [40.680015, -110.872226],
+    [40.679991, -110.872238], [40.679724, -110.872187], [40.679707, -110.872183],
+    [40.679466, -110.872024], [40.679374, -110.871964], [40.679134, -110.871802],
+    [40.679032, -110.871733], [40.678777, -110.871617], [40.678522, -110.871501],
+    [40.678367, -110.871431], [40.678205, -110.871146], [40.678044, -110.870862],
+    [40.677882, -110.870577], [40.677815, -110.870459], [40.677668, -110.870161],
+    [40.677521, -110.869862], [40.67745, -110.869718],  [40.677463, -110.869363],
+    [40.677477, -110.869007], [40.67748, -110.868926],  [40.677327, -110.868633],
+    [40.677174, -110.868342], [40.676932, -110.868186], [40.676771, -110.868082],
+    [40.676508, -110.868005], [40.676244, -110.867929], [40.676101, -110.867887],
+    [40.67585, -110.867756],  [40.675726, -110.867692], [40.675532, -110.86794],
+    [40.675421, -110.868082], [40.67534, -110.868421],  [40.67526, -110.868761],
+    [40.675214, -110.868952], [40.675129, -110.86929],  [40.675076, -110.869498],
+    [40.674806, -110.869504], [40.674554, -110.869511], [40.674285, -110.869529],
+    [40.674015, -110.869546], [40.673766, -110.869562], [40.673497, -110.869585],
+    [40.673228, -110.869608], [40.673007, -110.869627], [40.672739, -110.869664],
+    [40.67247, -110.869701],  [40.672202, -110.869737], [40.67215, -110.869744],
+    [40.671881, -110.869766], [40.671611, -110.869788], [40.671343, -110.869809],
+    [40.67115, -110.86956],   [40.671062, -110.869446], [40.670793, -110.869413],
+    [40.670525, -110.86938],  [40.670314, -110.869355], [40.670045, -110.869338],
+    [40.669775, -110.869321], [40.669506, -110.869304], [40.669279, -110.86929],
+    [40.669011, -110.869329], [40.668924, -110.869342], [40.66874, -110.869603],
+    [40.668557, -110.869863], [40.668373, -110.870124], [40.668284, -110.870251],
+    [40.668095, -110.870505], [40.667907, -110.87076],  [40.66787, -110.870809],
+    [40.667772, -110.87114],  [40.667674, -110.871472], [40.667624, -110.871641],
+    [40.667407, -110.871853], [40.66719, -110.872064],  [40.667092, -110.87216],
+    [40.666835, -110.872268], [40.666578, -110.872375], [40.666403, -110.872448],
+    [40.666179, -110.872645], [40.665954, -110.872843], [40.665952, -110.872844],
+    [40.665688, -110.872773], [40.665423, -110.872702], [40.665402, -110.872696],
+    [40.665133, -110.872731], [40.664865, -110.872765], [40.664764, -110.872778],
+    [40.664596, -110.873056], [40.664428, -110.873335], [40.664276, -110.873587],
+    [40.664125, -110.873881], [40.663988, -110.874147], [40.663768, -110.873941],
+    [40.6636, -110.873784],   [40.663334, -110.873844], [40.663068, -110.873904],
+    [40.662802, -110.873964], [40.662536, -110.874024], [40.662499, -110.874032],
+    [40.662274, -110.874228], [40.662049, -110.874425], [40.661824, -110.874621],
+    [40.661611, -110.874807], [40.66144, -110.875082],  [40.661269, -110.875357],
+    [40.661098, -110.875633], [40.660935, -110.875896], [40.66074, -110.876142],
+    [40.660546, -110.876389], [40.660351, -110.876635], [40.660284, -110.87672],
+    [40.660178, -110.877047], [40.660073, -110.877374], [40.659967, -110.877702],
+    [40.659921, -110.877842], [40.660115, -110.878089], [40.660309, -110.878337],
+    [40.660334, -110.87837],  [40.660452, -110.87869],  [40.660571, -110.879009],
+    [40.660572, -110.879013], [40.660562, -110.879368], [40.660552, -110.879724],
+    [40.660541, -110.880079], [40.660535, -110.880316], [40.660506, -110.88067],
+    [40.660478, -110.881023], [40.660449, -110.881377], [40.660422, -110.881718],
+    [40.660515, -110.882052], [40.660608, -110.882386], [40.660697, -110.882708],
+    [40.660963, -110.882768], [40.661229, -110.882828], [40.661495, -110.882889],
+    [40.661498, -110.882889], [40.66137, -110.883202],  [40.661242, -110.883515],
+    [40.661114, -110.883828], [40.661073, -110.883929], [40.660857, -110.884142],
+    [40.660641, -110.884356], [40.660425, -110.884569], [40.660209, -110.884782],
+    [40.660172, -110.884819], [40.659942, -110.885005], [40.659712, -110.88519],
+    [40.659482, -110.885376], [40.659333, -110.885496], [40.659147, -110.885754],
+    [40.658962, -110.886012], [40.658776, -110.886271], [40.658658, -110.886436],
+    [40.658427, -110.88662],  [40.658196, -110.886803], [40.657965, -110.886987],
+    [40.657869, -110.887062], [40.657734, -110.88737],  [40.657599, -110.887678],
+    [40.657464, -110.887986], [40.657456, -110.888003], [40.657211, -110.888151],
+    [40.656966, -110.8883],   [40.65672, -110.888448],  [40.656475, -110.888596],
+    [40.65623, -110.888744],  [40.656093, -110.888827], [40.65585, -110.888981],
+    [40.655606, -110.889134], [40.655363, -110.889288], [40.65512, -110.889441],
+    [40.654916, -110.88957],  [40.654757, -110.889858], [40.654599, -110.890145],
+    [40.65444, -110.890433],  [40.654316, -110.890658], [40.654235, -110.890997],
+    [40.654155, -110.891337], [40.654074, -110.891676], [40.653993, -110.892015],
+    [40.653913, -110.892355], [40.653865, -110.892555], [40.654123, -110.892449],
+    [40.65438, -110.892344],  [40.654428, -110.892324], [40.654697, -110.892357],
+    [40.654965, -110.89239],  [40.655234, -110.892423], [40.655367, -110.89244],
+    [40.655635, -110.892485], [40.655902, -110.892529], [40.65617, -110.892574],
+    [40.656438, -110.892618], [40.656455, -110.892621], [40.656722, -110.892668],
+    [40.65699, -110.892716],  [40.657257, -110.892763], [40.657294, -110.89277],
+    [40.657564, -110.89277],  [40.657834, -110.89277],  [40.65802, -110.89277],
+    [40.658288, -110.89281],  [40.658556, -110.892849], [40.658824, -110.892889],
+    [40.659092, -110.892928], [40.659246, -110.892951], [40.659513, -110.893003],
+    [40.65978, -110.893054],  [40.660047, -110.893106], [40.660184, -110.893132],
+    [40.660401, -110.893343], [40.66061, -110.893545],  [40.660783, -110.893818],
+    [40.660956, -110.894091], [40.661129, -110.894364], [40.661185, -110.894452],
+    [40.661312, -110.894766], [40.661439, -110.89508],  [40.661498, -110.895227],
+    [40.661539, -110.895579], [40.661573, -110.895871], [40.661835, -110.895784],
+    [40.661973, -110.895739],
+  ];
+
+  // === Pickup point: SW of Hoover Lake's tip, by the small pond at the road curve ===
+  // The hike continues past the GPX endpoint, briefly following Hoover Lake Road
+  // until it reaches the small pond. The Jeep picks up there.
+  const PICKUP_INDEX = 28;  // first 29 points of the drive polyline become part of the hike
+  const HIKE_FULL = FEHR_TRACK.concat(HOOVER_TO_CAMP_DRIVE.slice(0, PICKUP_INDEX + 1));
+  const HOOVER = HOOVER_TO_CAMP_DRIVE[PICKUP_INDEX];           // pickup point at the small pond
+  const SHUTTLE_DRIVE = HOOVER_TO_CAMP_DRIVE.slice(PICKUP_INDEX);
+
+  // === Recommended route ===
+  // Segment 1: Fehr Lake Trail #212 (Gaia GPX) + short walk down Hoover Lake Rd to the pickup
+  const trailLine = L.polyline(
+    HIKE_FULL,
+    { color: "#e74c3c", weight: 5, opacity: 0.95 }
+  ).addTo(map);
+  trailLine.bindPopup("<b>Hike segment</b><br>Fehr TH → Hoover Lake → short walk down Hoover Lake Rd<br>Ends at the Jeep pickup by the small pond SW of Hoover");
+
+  // Segment 2: Jeep shuttle from the small-pond pickup → Echo Lake camp
+  const roadLine = L.polyline(
+    SHUTTLE_DRIVE,
+    { color: "#3498db", weight: 5, opacity: 0.9, dashArray: "10,6" }
+  ).addTo(map);
+  roadLine.bindPopup("<b>Jeep shuttle — Hoover Lake Road</b><br>Pickup at small pond → Echo Lake camp<br>Real driving polyline from Jared's Google My Map<br>Boys ride, not walk · Jeeps cover this section");
+
+  function pin(latlng, color, label, popup) {
+    const icon = L.divIcon({
+      className: "",
+      html: `<div style="background:${color};width:18px;height:18px;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,0.5),0 2px 6px rgba(0,0,0,0.5);"></div>`,
+      iconSize: [18,18], iconAnchor: [9,9],
+    });
+    return L.marker(latlng, { icon, title: label }).bindPopup(popup).addTo(map);
+  }
+
+  pin(TRAILHEAD, "#e74c3c", "Fehr Lake Trailhead",      "<b>Fehr Lake Trailhead — Mile 0</b><br>40.69300, -110.89186 <i>(exact)</i><br>10,260 ft · UT-150 MP 30.6<br>Across from Moosehorn Campground");
+  pin(HOOVER,    "#e74c3c", "Jeep pickup — small pond SW of Hoover", "<b>Jeep pickup</b><br>By the small pond, just SW of Hoover Lake's tip<br>Where Hoover Lake Road curves from south to southeast<br>Boys end the hike here · Jeeps shuttle to camp from here");
+  pin(CAMP,      "#2ecc71", "Echo Lake camp",            "<b>Echo Lake camp</b><br>40.66220, -110.89490<br>9,740 ft · SE shore campsites · spring water");
+
+  // Fit map to the actual trail + shuttle route
+  map.fitBounds(L.featureGroup([trailLine, roadLine]).getBounds().pad(0.1));
+</script>
+
+</body>
+</html>

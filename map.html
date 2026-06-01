@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map &amp; Route — YM Camp 2026</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span><strong>YM Camp 2026</strong><span class="sub">Echo Lake · High Uintas</span></span></a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">Menu</button>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="agenda.html">Agenda</a>
+      <a href="camp.html">Camp</a>
+      <a href="pack.html">Pack</a>
+      <a href="safety.html">Safety</a>
+      <a href="logistics.html">Logistics</a>
+      <a href="menu.html">Menu</a>
+      <a href="leaders.html">Leaders</a>
+      <a href="swag.html">Gear</a>
+      <a href="rsvp.html">RSVP</a>
+      <a href="map.html" class="active">Map</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-banner" style="background-image: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.4)), url('assets/photos/boardwalk.jpg'); background-position: center 65%;"></div>
+
+  <h1>Map &amp; Route</h1>
+  <p class="lead">Interactive route map. Trail polyline is from a real recorded Gaia track. Switch basemaps with the top-right control. Drop your own GPX file in to overlay additional tracks.</p>
+
+  <div class="map-frame">
+    <iframe src="assets/route_map_widget.html" title="YM Camp route map" loading="lazy"></iframe>
+  </div>
+
+  <h2>The Plan</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>🥾 Boys hike</h3>
+      <p>Fehr Lake Trailhead → Fehr Lake → Sheppard Lake → Hoover Lake. Maintained USFS trail with Uinta boardwalks. Descent through the basin. Real GPX track (trimmed to end at Hoover) is baked into the map.</p>
+    </div>
+    <div class="card">
+      <h3>🚙 Jeep shuttle (~3.25 mi)</h3>
+      <p>Pickup at Hoover Lake. <strong>Hoover Lake Road</strong> south then west to Echo Lake camp. 30–45 min driving in low gear.</p>
+    </div>
+  </div>
+
+  <div class="photo-grid">
+    <figure class="photo">
+      <img src="assets/photos/trail-signpost.jpg" alt="Echo Lake Trail signpost and boardwalk through meadow" loading="lazy">
+      <figcaption>Trail signpost near the boardwalk — photo: Chris Kelley, Sep 2025</figcaption>
+    </figure>
+    <figure class="photo">
+      <img src="assets/photos/sheppard-lake.jpg" alt="Sheppard Lake with carved sign on tree" loading="lazy">
+      <figcaption>Sheppard Lake — halfway rest point — photo: Todd Allen, Jul 2020</figcaption>
+    </figure>
+    <figure class="photo">
+      <img src="assets/photos/jeep-road.jpg" alt="Hoover Lake Road through autumn meadow" loading="lazy">
+      <figcaption>Hoover Lake Road — Jeep shuttle route — photo: Chris Kelley, Sep 2025</figcaption>
+    </figure>
+  </div>
+
+  <h2>Coordinates</h2>
+  <div class="kv">
+    <dt>Fehr Lake Trailhead</dt><dd><code>40.69300, -110.89186</code> · 10,260 ft · UT-150 MP 30.6, across from Moosehorn Campground</dd>
+    <dt>Hoover Lake (pickup)</dt><dd>End of Fehr Lake Trail #212 · start of Hoover Lake Road (drive to camp)</dd>
+    <dt>Echo Lake camp</dt><dd><code>40.66220, -110.89490</code> · 9,740 ft · SE shore campsites</dd>
+  </div>
+
+  <h2>Downloads</h2>
+  <ul>
+    <li><a href="assets/Fehr_Lake.gpx" download>Fehr_Lake.gpx</a> — Gaia track from trailhead to Hoover Lake. Import into your own Gaia / OnX / Garmin.</li>
+  </ul>
+
+  <div class="note info">
+    <strong>Heads up:</strong> there's no cell signal anywhere from the trailhead to camp. Download Gaia offline maps and pre-load this GPX <em>before</em> you leave the highway. Leaders will be carrying a SPOT GPS for emergencies.
+  </div>
+
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="https://www.google.com/maps/dir/Vineyard,+UT/40.69300214048538,-110.89185895218696" target="_blank">Drive from Vineyard to the trailhead (Google Maps)</a></li>
+    <li><a href="https://www.google.com/maps/dir/Vineyard,+UT/40.662199719974,-110.8949015903432" target="_blank">Drive from Vineyard to Echo Lake camp via Murdock Basin Rd (Google Maps)</a></li>
+  </ul>
+
+</main>
+
+<footer class="site-footer">
+  <div class="links">
+    <a href="index.html">Home</a> · <a href="agenda.html">Agenda</a> · <a href="camp.html">Camp</a> · <a href="pack.html">Pack</a> · <a href="safety.html">Safety</a> · <a href="logistics.html">Logistics</a> · <a href="menu.html">Menu</a> · <a href="leaders.html">Leaders</a> · <a href="swag.html">Gear</a> · <a href="rsvp.html">RSVP</a> · <a href="map.html">Map</a>
+  </div>
+  <div>Vineyard Ward Young Men's Camp 2026 · Echo Lake, High Uintas</div>
+  <div class="meta" style="margin-top:6px;">Photos: Greg Jensen · Todd Allen · Taylor Eich (Google Earth) · Chris Kelley · Ridge Chambers (AllTrails / Google Maps)</div>
+</footer>
+
+</body>
+</html>

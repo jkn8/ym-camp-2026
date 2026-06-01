@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSVP — YM Camp 2026</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Local form styles */
+  .rsvp-form { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }
+  .rsvp-form label { display: block; margin: 14px 0 4px; font-weight: 600; font-size: 14px; color: var(--ink); }
+  .rsvp-form label .hint { font-weight: 400; color: var(--slate); font-size: 13px; margin-left: 6px; }
+  .rsvp-form input[type=text], .rsvp-form input[type=email], .rsvp-form input[type=tel], .rsvp-form select, .rsvp-form textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 15px; font-family: inherit; background: #fff; color: var(--ink);
+  }
+  .rsvp-form input:focus, .rsvp-form select:focus, .rsvp-form textarea:focus {
+    outline: none; border-color: var(--forest); box-shadow: 0 0 0 3px rgba(45,90,61,0.15);
+  }
+  .rsvp-form textarea { min-height: 80px; resize: vertical; }
+  .rsvp-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .rsvp-form .row { grid-template-columns: 1fr; gap: 0; } }
+  .rsvp-form .radio-group { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+  .rsvp-form .radio-group label { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+  .rsvp-form .radio-group label:hover { background: var(--cream-dark); }
+  .rsvp-form .radio-group input[type=radio]:checked + span { font-weight: 600; color: var(--forest-dark); }
+  .rsvp-form .submit-row { margin-top: 22px; }
+  .rsvp-form button[type=submit] {
+    background: var(--rust); color: #fff; border: 1px solid var(--rust-dark);
+    padding: 13px 28px; font-size: 16px; font-weight: 600; border-radius: var(--radius);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .rsvp-form button[type=submit]:hover { background: var(--rust-dark); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span><strong>YM Camp 2026</strong><span class="sub">Echo Lake · High Uintas</span></span></a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('nav').classList.toggle('open')">Menu</button>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="agenda.html">Agenda</a>
+      <a href="camp.html">Camp</a>
+      <a href="pack.html">Pack</a>
+      <a href="safety.html">Safety</a>
+      <a href="logistics.html">Logistics</a>
+      <a href="menu.html">Menu</a>
+      <a href="leaders.html">Leaders</a>
+      <a href="swag.html">Gear</a>
+      <a href="rsvp.html" class="active">RSVP</a>
+      <a href="map.html">Map</a>
+    </nav>
+  </div>
+</header>
+
+<main class="narrow">
+  <h1>RSVP</h1>
+  <p class="lead">Tell us your son is coming so we can plan food, gear sizes, and shuttle capacity. One form per boy. Quickest if a parent fills it out.</p>
+
+  <div class="note info">
+    <strong>Two sessions:</strong>
+    <ul style="margin: 8px 0 0;">
+      <li><strong>Teachers &amp; Priests:</strong> full trip, Mon Jul 13 → Thu Jul 16 (hike in Monday)</li>
+      <li><strong>Deacons:</strong> Wed Jul 15 → Thu Jul 16 (driven in by a separate set of leaders, no hike)</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <strong>Submit by June 15</strong> so we have time to order gear and lock the Costco run. Late additions: still try — we'll do our best.
+  </div>
+
+  <form class="rsvp-form" action="https://formspree.io/f/mkoelboq" method="POST">
+
+    <label for="boy_name">Boy's full name <span class="hint">required</span></label>
+    <input type="text" id="boy_name" name="boy_name" required>
+
+    <label for="age">Age</label>
+    <input type="text" id="age" name="age">
+
+    <label>Which session?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="session" value="teachers-priests" required> <span>Full trip — <strong>Teachers &amp; Priests only</strong> (Mon July 13 → Thu July 16)</span></label>
+      <label><input type="radio" name="session" value="deacons" required> <span>Deacons (Wed July 15 → Thu July 16, driven in)</span></label>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="parent_name">Parent / guardian name <span class="hint">required</span></label>
+        <input type="text" id="parent_name" name="parent_name" required>
+      </div>
+      <div>
+        <label for="parent_phone">Parent cell phone <span class="hint">required</span></label>
+        <input type="tel" id="parent_phone" name="parent_phone" required>
+      </div>
+    </div>
+
+    <label for="parent_email">Parent email</label>
+    <input type="email" id="parent_email" name="parent_email">
+
+    <label for="emergency_contact">Backup emergency contact <span class="hint">name + phone, if different from above</span></label>
+    <input type="text" id="emergency_contact" name="emergency_contact">
+
+    <label for="hoodie_size">Hoodie size</label>
+    <select id="hoodie_size" name="hoodie_size">
+      <option value="">— select —</option>
+      <option>Youth M</option>
+      <option>Youth L</option>
+      <option>Youth XL</option>
+      <option>Adult S</option>
+      <option>Adult M</option>
+      <option>Adult L</option>
+      <option>Adult XL</option>
+      <option>Adult 2XL</option>
+    </select>
+
+    <label for="dietary">Food allergies / dietary restrictions <span class="hint">peanut, dairy, gluten, vegetarian, etc.</span></label>
+    <textarea id="dietary" name="dietary"></textarea>
+
+    <label for="medical">Medical conditions or medications leaders should know about <span class="hint">asthma, EpiPen, insulin, ADHD meds, etc.</span></label>
+    <textarea id="medical" name="medical"></textarea>
+
+    <label for="notes">Anything else we should know? <span class="hint">behavioral, emotional, "first time at altitude", anything</span></label>
+    <textarea id="notes" name="notes"></textarea>
+
+    <label><input type="checkbox" name="permission_acknowledged" required> I understand I still need to <a href="forms/medical-release.pdf" target="_blank">sign the permission &amp; medical release form</a> and return it before the trip.</label>
+
+    <div class="submit-row">
+      <button type="submit">Submit RSVP</button>
+    </div>
+
+    <p class="muted" style="font-size:12px; margin-top:14px;">
+      Submissions go directly to the trip leaders. No data shared elsewhere.
+    </p>
+  </form>
+
+  <h2 style="margin-top: 40px;">Other Required Steps</h2>
+  <ul>
+    <li><a href="forms/medical-release.pdf" target="_blank">Sign the permission &amp; medical release form (PDF)</a> — return to a leader by July 3</li>
+    <li>Review the <a href="pack.html">Pack List</a> with your son</li>
+    <li>Read the <a href="safety.html">Safety</a> page</li>
+  </ul>
+
+</main>
+
+<footer class="site-footer">
+  <div class="links">
+    <a href="index.html">Home</a> · <a href="agenda.html">Agenda</a> · <a href="camp.html">Camp</a> · <a href="pack.html">Pack</a> · <a href="safety.html">Safety</a> · <a href="logistics.html">Logistics</a> · <a href="menu.html">Menu</a> · <a href="leaders.html">Leaders</a> · <a href="swag.html">Gear</a> · <a href="rsvp.html">RSVP</a> · <a href="map.html">Map</a>
+  </div>
+  <div>Vineyard Ward Young Men's Camp 2026 · Echo Lake, High Uintas</div>
+  <div class="meta" style="margin-top:6px;">Photos: Greg Jensen · Todd Allen · Taylor Eich (Google Earth) · Chris Kelley · Ridge Chambers (AllTrails / Google Maps)</div>
+</footer>
+
+</body>
+</html>
