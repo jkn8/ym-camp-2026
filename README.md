@@ -69,3 +69,5 @@ To bulk-update leader names once confirmed:
 # Example: replace placeholder in all html files
 sed -i '' 's/Leader name TBD/Actual Name/g' leaders.html
 ```
+
+# ym-camp-2026
