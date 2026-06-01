@@ -1,15 +1,43 @@
 #!/usr/bin/env bash
-# YM Camp 2026 — encrypt site and push to GitHub Pages
-# Run from the site/ folder: ./deploy.sh
-set -e
+# YM Camp 2026 - encrypt local source files and push GitHub Pages output.
+# Edit HTML in ./src/ (gitignored), then run:
+#   YM_CAMP_PASSWORD='your-password' ./deploy.sh "Commit message"
+set -euo pipefail
 
-# ----- EDIT ME -----
-PASSWORD="changeme"            # The shared password for parents/leaders
-COMMIT_MSG="Update site"       # Optional: customize per push
-# -------------------
+cd "$(dirname "$0")"
 
-if [ "$PASSWORD" = "changeme" ]; then
-  echo "❌ Edit deploy.sh and set PASSWORD before running."
+SOURCE_DIR="${SOURCE_DIR:-src}"
+COMMIT_MSG="${1:-Update encrypted site}"
+PASSWORD="${YM_CAMP_PASSWORD:-}"
+
+HTML_FILES=(
+  index.html
+  agenda.html
+  camp.html
+  pack.html
+  safety.html
+  logistics.html
+  menu.html
+  leaders.html
+  swag.html
+  rsvp.html
+  map.html
+)
+
+if [ ! -d "$SOURCE_DIR" ]; then
+  echo "Missing $SOURCE_DIR/."
+  echo "This repo keeps unencrypted source local-only so GitHub Pages cannot serve it."
+  echo "Restore source from the last clean commit or decrypt with the site password, then rerun."
+  exit 1
+fi
+
+if [ -z "$PASSWORD" ]; then
+  read -r -s -p "Staticrypt password: " PASSWORD
+  echo ""
+fi
+
+if [ -z "$PASSWORD" ]; then
+  echo "No password provided."
   exit 1
 fi
 
@@ -18,29 +46,54 @@ if ! command -v staticrypt >/dev/null 2>&1; then
   npm install -g staticrypt
 fi
 
-# Stash the originals (so re-running doesn't double-encrypt)
-mkdir -p .source
-cp -f *.html .source/ 2>/dev/null || true
+for file in "${HTML_FILES[@]}"; do
+  if [ ! -f "$SOURCE_DIR/$file" ]; then
+    echo "Missing source file: $SOURCE_DIR/$file"
+    exit 1
+  fi
+  cp "$SOURCE_DIR/$file" "$file"
+done
 
-# Restore from .source before encrypting (so we always start from clean HTML)
-cp -f .source/*.html . 2>/dev/null || true
+if [ ! -f "$SOURCE_DIR/assets/route_map_widget.html" ]; then
+  echo "Missing source file: $SOURCE_DIR/assets/route_map_widget.html"
+  exit 1
+fi
+mkdir -p assets
+cp "$SOURCE_DIR/assets/route_map_widget.html" assets/route_map_widget.html
+touch .nojekyll
 
-# Encrypt all top-level HTML pages
-echo "🔒 Encrypting pages with staticrypt..."
-staticrypt index.html agenda.html camp.html pack.html safety.html \
-           logistics.html menu.html leaders.html swag.html rsvp.html map.html \
-           -p "$PASSWORD" \
-           --short \
-           -d . \
-           --template-title "YM Camp 2026" \
-           --template-instructions "Vineyard Ward parents: enter the password shared by your YM leaders." \
-           --template-button "Enter"
+echo "Encrypting top-level pages..."
+staticrypt "${HTML_FILES[@]}" \
+  -p "$PASSWORD" \
+  --short \
+  -d . \
+  --template-title "YM Camp 2026" \
+  --template-button "Open Camp Site" \
+  --template-instructions "Vineyard Ward parents: ask Jared, Zach, Andrew, or Tim for the password."
 
-# Commit + push
-git add -A
+echo "Encrypting route map widget..."
+(
+  cd assets
+  staticrypt route_map_widget.html \
+    -p "$PASSWORD" \
+    --short \
+    -d . \
+    -c ../.staticrypt.json \
+    --template-title "YM Camp 2026 Map" \
+    --template-button "Open Camp Site" \
+    --template-instructions "Vineyard Ward parents: ask Jared, Zach, Andrew, or Tim for the password."
+)
+
+for file in "${HTML_FILES[@]}" assets/route_map_widget.html; do
+  if ! grep -q "staticrypt-html" "$file"; then
+    echo "Encryption check failed for $file"
+    exit 1
+  fi
+done
+
+git add .gitignore .nojekyll .staticrypt.json README.md deploy.sh "${HTML_FILES[@]}" assets/route_map_widget.html
 git commit -m "$COMMIT_MSG" || echo "(nothing to commit)"
-git push
+git push origin "$(git branch --show-current)"
 
 echo ""
-echo "✅ Site deployed. Pages will refresh within ~60 seconds."
-echo "   URL: check repo Settings → Pages for the live URL."
+echo "Encrypted site deployed. GitHub Pages should refresh shortly."

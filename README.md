@@ -4,49 +4,59 @@ Static HTML/CSS website for the Vineyard Ward Young Men's Camp at Echo Lake, Jul
 
 ## Open Locally
 
-Double-click `index.html`, or open in any browser. No build step, no server required.
+The committed root `.html` files are encrypted for GitHub Pages. Edit the local-only `src/` copies instead, then run `deploy.sh` to regenerate the encrypted pages.
 
-## Deploy to GitHub Pages (Free Hosting)
+`src/` is intentionally gitignored so the unencrypted camp details are not published by GitHub Pages or exposed in the public repo.
 
-1. **Create a public GitHub repo.** Suggested name: `ym-camp-2026`.
-2. **Push everything in this folder to the repo root:**
+## Deploy to GitHub Pages
+
+1. **Create or use the GitHub repo.** Current repo: `https://github.com/jkn8/ym-camp-2026`.
+2. **Push this folder to the repo root:**
    ```
    git init
    git add .
    git commit -m "Initial site"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/ym-camp-2026.git
-   git push -u origin main
+   git branch -M safestreets
+   git remote add origin https://github.com/jkn8/ym-camp-2026.git
+   git push -u origin safestreets
    ```
-3. **Enable GitHub Pages:** repo Settings → Pages → Source: "Deploy from a branch" → Branch: `main` / root → Save.
-4. Site goes live in about a minute at `https://<your-username>.github.io/ym-camp-2026/`.
-5. Optional: connect a custom domain (~$12/yr at Cloudflare Registrar). Add a `CNAME` file with the domain to the repo root + DNS record at the registrar.
+3. **Enable GitHub Pages:** repo Settings -> Pages -> Source: "Deploy from a branch" -> Branch: `safestreets` / root -> Save.
+4. Site goes live in about a minute at `https://jkn8.github.io/ym-camp-2026/`.
 
 ## File Map
 
 ```
 site/
-├── index.html         Home + headline timeline
-├── agenda.html        Full hour-by-hour day-by-day
-├── camp.html          Echo Lake info, weather, what's there
-├── pack.html          Pack list (Wix-structured)
-├── safety.html        Survival night, bears, firearms, medical, comms
-├── logistics.html     Drop-off, vehicles, food, costs, drive routes
-├── leaders.html       4 leader cards with roles + contacts
-├── swag.html          Hoodie design + ordering
-├── map.html           Map page (embeds the interactive widget)
+├── index.html         Encrypted home page
+├── agenda.html        Encrypted agenda page
+├── camp.html          Encrypted camp page
+├── pack.html          Encrypted packing page
+├── safety.html        Encrypted safety page
+├── logistics.html     Encrypted logistics page
+├── leaders.html       Encrypted leaders page
+├── swag.html          Encrypted gear page
+├── map.html           Encrypted map page
 ├── styles.css         Shared stylesheet
+├── deploy.sh          Encrypts local src/ into the published root files
 ├── README.md          This file
 ├── assets/
-│   ├── route_map_widget.html    Interactive Leaflet map (Fehr_Lake.gpx baked in)
+│   ├── route_map_widget.html    Encrypted interactive Leaflet map
 │   └── Fehr_Lake.gpx            Recorded Gaia track, TH → Hoover Lake
+├── src/               Local-only unencrypted source, gitignored
 └── forms/
     └── medical-release.pdf      Parental / medical permission form
 ```
 
 ## Updating the Site
 
-Edit any `.html` file in a code editor (Dreamweaver, VS Code) or directly in github.com via the pencil icon. Commit and push (or save via GitHub web UI) — site updates within a minute.
+Edit files in `src/`, not the encrypted root `.html` files. Then deploy:
+
+```bash
+cd "/Users/jaredneilson/Downloads/Claude-Folder/YM Camp/site"
+YM_CAMP_PASSWORD='your-password' ./deploy.sh "Update site"
+```
+
+The script copies `src/*.html` and `src/assets/route_map_widget.html` into the published root, encrypts them with Staticrypt, commits the encrypted output, and pushes the current branch.
 
 Common updates to plan for:
 
@@ -66,8 +76,6 @@ The `tbd` tag (yellow background) marks anything still pending a decision. Searc
 
 To bulk-update leader names once confirmed:
 ```bash
-# Example: replace placeholder in all html files
-sed -i '' 's/Leader name TBD/Actual Name/g' leaders.html
+# Example: replace placeholder in source html files
+sed -i '' 's/Leader name TBD/Actual Name/g' src/*.html
 ```
-
-# ym-camp-2026
